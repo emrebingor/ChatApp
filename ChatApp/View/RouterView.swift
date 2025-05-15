@@ -8,10 +8,32 @@
 import SwiftUI
 
 struct RouterView: View {
+    @StateObject private var navigationManager = NavigationManager()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack(path: $navigationManager.path) {
+            HomeView(viewModel: HomeViewModel(navigationManager: navigationManager))
+                .environmentObject(navigationManager)
+                .navigationDestination(for: AppRoute.self) { route in
+                    switch route {
+                    case .home:
+                        HomeView(viewModel: HomeViewModel(navigationManager: navigationManager))
+                            .environmentObject(navigationManager)
+                    case .loginRegister(let isLogin):
+                        LoginRegisterView(
+                            viewModel: LoginRegisterViewModel(isLogin: isLogin, navigationManager: navigationManager)
+                        )
+                        .environmentObject(navigationManager)
+                    case .chat:
+                        ChatView(chatViewModel: ChatViewModel(navigationManager: navigationManager))
+                            .environmentObject(navigationManager)
+                    }
+                }
+        }
+        .environmentObject(navigationManager)
     }
 }
+
 
 #Preview {
     RouterView()

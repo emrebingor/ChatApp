@@ -6,13 +6,26 @@
 //
 
 import Foundation
+import SwiftUI
 
-class AppState: ObservableObject {
-    enum Screen {
-        case home
-        case login
-        case chat
+enum AppRoute: Hashable {
+    case home
+    case loginRegister(isLogin: Bool)
+    case chat
+}
+
+final class NavigationManager: ObservableObject {
+    @Published var path = NavigationPath()
+    
+    func push(_ route: AppRoute) {
+        path.append(route)
     }
-
-    @Published var currentScreen: Screen = .home
+    
+    func pop() {
+        path.removeLast()
+    }
+    
+    func popToRoot() {
+        path.removeLast(path.count)
+    }
 }
